@@ -3,7 +3,6 @@ module "this_role" {
   source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
 
   role_name                             = "eks_sm"
-  attach_external_dns_policy            = var.create_role
   attach_external_secrets_policy        = var.create_role
   external_secrets_secrets_manager_arns = ["*"]
   external_secrets_ssm_parameter_arns   = ["*"]
@@ -32,11 +31,11 @@ resource "aws_iam_policy" "kms" {
   path        = "/"
   description = "Provides permissions to for External access KMS"
   policy      = data.aws_iam_policy_document.kms[0].json
-  tags = var.tags
+  tags        = var.tags
 }
 
 resource "aws_iam_role_policy_attachment" "kms" {
-  count = var.create_role ? 1 : 0
+  count      = var.create_role ? 1 : 0
   role       = module.this_role.0.iam_role_name
   policy_arn = aws_iam_policy.kms[0].arn
 }
